@@ -36,15 +36,15 @@ class CobaController extends Controller
             'no_tlp' => 'required|numeric',
             'alamat' => 'required'
         ]);
-        
-        
+
+
         $friends = Friends::create([
             'nama' => $request->nama,
             'no_telp' => $request->no_tlp,
             'alamat' => $request->alamat
         ]);
 
-        if($friends){
+        if ($friends) {
             return response()->json([
                 'success' => true,
                 'message' => 'Data Teman Berhasil Ditambahkan',
@@ -57,7 +57,6 @@ class CobaController extends Controller
                 'data' => $friends
             ], 409);
         }
-            
     }
 
     /**
@@ -68,7 +67,20 @@ class CobaController extends Controller
      */
     public function show($id)
     {
-        //
+        $friend = Friends::where('id', $id)->first();
+
+        if ($friend) {
+            return response()->json([
+                'success' => true,
+                'message' => "Detail Teman",
+                'data' => $friend
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Detail Teman Tidak Ditemukan '
+            ], 409);
+        }
     }
 
     /**
@@ -80,7 +92,32 @@ class CobaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nama' => 'required|unique:friends|max:255',
+            'no_tlp' => 'required|numeric',
+            'alamat' => 'required'
+        ]);
+
+        $friend = Friends::find($id)
+        ->update([
+                    'nama' => $request->nama,
+                    'no_telp' => $request->no_tlp,
+                    'alamat' => $request->alamat
+        ]);
+        
+        if($friend){
+            return response()->json([
+                'success' => true,
+                'message' => "Data Teman Berhasil Dirubah",
+                'data' => $friend
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Detail Teman Gagal Dirubah ',
+                'data' => $friend
+            ], 409);
+        }
     }
 
     /**
@@ -91,6 +128,19 @@ class CobaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $friend = Friends::find($id)->delete();
+        if($friend){
+            return response()->json([
+                'success' => true,
+                'message' => "Data Teman Berhasil Dihapus",
+                'data' => $friend
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Detail Teman Gagal Dihapus ',
+                'data' => $friend
+            ], 409);
+        }
     }
 }
